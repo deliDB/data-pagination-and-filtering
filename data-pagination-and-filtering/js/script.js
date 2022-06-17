@@ -4,6 +4,10 @@ FSJS Project 2 - Data Pagination and Filtering
 */
 
 document.addEventListener('DOMContentLoaded', () => {
+  
+   const studentList = document.querySelector('.student-list');
+   const linkList = document.querySelector('.link-list');
+   const body = document.querySelector('body');
 
    /**
     * Creates and appends the elements needed to display a page of nine students.
@@ -16,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
          const itemsPerPage = 9;
          const startIndex = (page * itemsPerPage) - itemsPerPage;
          const endIndex = page * itemsPerPage;
-         const studentList = document.querySelector('.student-list');
+         //const studentList = document.querySelector('.student-list');
          let html = '';
          studentList.innerHTML = '';
    
@@ -49,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
    
       const addPagination = (list) => {
          const numOfButtons = Math.ceil(list.length / 9);
-         const linkList = document.querySelector('.link-list');
+         //const linkList = document.querySelector('.link-list');
          linkList.innerHTML = '';
          for (let i = 1; i <= numOfButtons; i++) {
             linkList.insertAdjacentHTML('beforeend', `
@@ -99,30 +103,39 @@ document.addEventListener('DOMContentLoaded', () => {
       const searchStudents = (searchInput, studentArray) => {
          let filteredList = [];
          const inputValue = searchInput.value;
-         if(inputValue.length !== 0){ 
-            for(const student of studentArray){  
-               if(student.name.first.toLowerCase().includes(inputValue.toLowerCase()) || student.name.last.toLowerCase().includes(inputValue.toLowerCase())){
-                  filteredList.push(student); 
-                } //else {
-               //    const studentList = document.querySelector('.student-list');
-               //    studentList.style.display = 'none';
-               //    document.querySelector('h2').innerText = 'No results found!'
-               //    break;
-               // }
-               } 
+         for(const student of studentArray){  
+            if(student.name.first.toLowerCase().includes(inputValue.toLowerCase()) || student.name.last.toLowerCase().includes(inputValue.toLowerCase())){
+               filteredList.push(student);   
+            } 
+         } 
+         if(filteredList.length !== 0){
+            studentList.style.display = '';
+            linkList.style.display = '';
+            body.lastElementChild.style.display = 'none';
+            showPage(filteredList, 1);
+            addPagination(filteredList);
+         } else {
+            studentList.style.display = 'none';
+            linkList.style.display = 'none';
+            body.lastElementChild.innerText = 'No results found!'
+            body.lastElementChild.style.display = '';
          }
-         showPage(filteredList, 1);
-         addPagination(filteredList);
-      }
+      }   
+
+      //Add p element to body for "No results found!"
+      body.insertAdjacentHTML('beforeend', `<p></p>`);
+     
       const submit = document.querySelector('.student-search');
       const input = document.querySelector('#search')
       submit.addEventListener('click', (e) => {
          const button = e.target;
          if(button.tagName === 'IMG'){
             searchStudents(input, data);
-         // Test button click function
-         //console.log('Submit button is functional!');
          }
+       });
+
+       submit.addEventListener('keyup', () => {
+            searchStudents(input, data);
        });
    
    // Call functions
